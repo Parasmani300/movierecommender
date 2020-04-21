@@ -1,0 +1,67 @@
+{%extends 'base.html' %}
+
+{%block body_block %}
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="jumbotron">
+                <form class="form-group" method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input class="btn btn-primary" type="submit" value="Search">
+                </form>
+                <hr>
+                    <h1>{{msg}}</h1>
+                    <div class="container">
+                        <div class="row">
+                            {% if movies|length > 1 %}
+                        {% for movie in movies %}
+                        <div class="col-md-3" style="padding: 5px;">
+                            <div class="well text-center" style="padding: 5px;">
+                              <img src="{{movie.coverurl}}" style="width: 200px; height: 200px;">
+                              <a href="{% url 'movie_details' value=movie.title%}"><h5><b>{{ movie.title }}</b></h5></a>
+                            </div>
+                          </div>
+                        {% endfor %}
+                    {% endif %}
+                        </div> 
+                    </div>
+                  
+            </div>
+            
+        </div>
+        <div class="col-md-4">
+            <div class="jumbotron">
+            {% if user.is_authenticated %}
+                <img class="img-thumbnail" src="{{user.profile.profile_pic.url}}" alt="No image">
+                <h3>@{{user.username}}</h3>
+                <h3>{{user.email}}</h3>
+                <hr>
+                <h2>Favourites</h1>
+                <h3>{{user.profile.movie1}}</h2>
+                <h3>{{user.profile.movie2}}</h3>
+                <h3>{{user.profile.movie3}}</h3>
+                <h3>{{user.profile.movie4}}</h3>
+            {% else %}
+
+            <h3>Login to personalize</h3>
+            <form class="form-group" action="{% url 'recommender:user_login'%}" method="POST">
+                {% csrf_token %}
+                <label for="username">Username</label>
+                <input type="text" name="username" placeholder="Enter username">
+                <label for="password">Password</label>
+                <input type="password" name="password">
+                <br>
+                <input class="btn btn-primary" type="submit" value="Login">
+                <p>New User <a href="{% url 'recommender:register'%}">Register</a></p>
+            </form>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+   
+{% endblock %}
